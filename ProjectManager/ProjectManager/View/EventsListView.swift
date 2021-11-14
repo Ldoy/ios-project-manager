@@ -19,10 +19,18 @@ struct EventListView<T: ListViewModelable>: View {
                 ForEach(eventListViewModels.output.itemViewModels) { itemViewModel in
                     if itemViewModel.output.currentEvent.state == state {
                         EventListRowView(listRowViewModel: itemViewModel)
+                            .highPriorityGesture( TapGesture()
+                                                    .onEnded { _ in
+                                itemViewModel.input.onTouchRow()
+                            } )
+                            .onLongPressGesture {
+                                itemViewModel.input.onPressRow()
+                            }
                     }
                 }.onDelete { indexSet in
                     eventListViewModels.input.onDeleteRow(at: indexSet)
                 }
+                
             }
         }
     }

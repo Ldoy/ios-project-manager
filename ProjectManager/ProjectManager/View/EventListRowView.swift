@@ -31,21 +31,23 @@ struct EventListRowView<Value: ItemViewModelable>: View {
                 .font(.callout)
                 .foregroundColor(decideDateTextColor())
         }
-        .onTapGesture {
-            self.isPresented = true
+        .sheet(isPresented: Binding<Bool>(get:
+             {
+                listRowViewModel.output.isTouchRow
+        }, set: { _ in
         }
-        .sheet(isPresented: $isPresented) {
-            self.isPresented = false
-        } content: {
+        ), onDismiss: {
+            listRowViewModel.input.onTouchRow()
+        }, content: {
             DetailEventView(detailViewModel: listRowViewModel.output.detailViewModel,
-                            id: UUID())
-        }
-        .onLongPressGesture {
-            isPopOvered.toggle()
-        }
-        .popover(isPresented: $isPopOvered) {
+                                        id: UUID())
+        })
+        .popover(isPresented: Binding<Bool> (get: {
+            listRowViewModel.output.isPressedRow
+        }, set: { _ in
+        }), content: {
             PopOverView(eventState: listRowViewModel.output.currentEvent.state,
                         viewModel: listRowViewModel)
-        }
+        })
     }
 }
