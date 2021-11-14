@@ -22,7 +22,7 @@ struct EventListView<T: ListViewModelable>: View {
                             .highPriorityGesture( TapGesture()
                                                     .onEnded { _ in
                                 itemViewModel.input.onTouchRow()
-                            } )
+                            })
                             .onLongPressGesture {
                                 itemViewModel.input.onPressRow()
                             }
@@ -30,7 +30,6 @@ struct EventListView<T: ListViewModelable>: View {
                 }.onDelete { indexSet in
                     eventListViewModels.input.onDeleteRow(at: indexSet)
                 }
-                
             }
         }
     }

@@ -11,6 +11,7 @@ protocol ItemViewModelInputInterface {
     func onChangeEventState(to eventState: EventState)
     func onTouchRow()
     func onPressRow()
+    func onDismissSheet()
 }
 
 protocol ItemViewModelOutputInterface {
@@ -41,9 +42,9 @@ class ItemViewModel: ItemViewModelable, Delegatable, Identifiable {
     var input: ItemViewModelInputInterface { return self }
     var output: ItemViewModelOutputInterface { return self }
     weak var delegate: Delegatable?
+    
     @Published var isTouchRow: Bool = false
     @Published var isPressedRow: Bool = false
-    
     @Published var detailViewModel = DetailViewModel(event:
                                                         Event(title: "제목을 입력해 주세요",
                                                               description: "1000자까지 입력해 주세요",
@@ -70,7 +71,11 @@ extension ItemViewModel: ItemViewModelInputInterface {
     }
     
     func onTouchRow() {
-        self.isTouchRow.toggle()
+        self.isTouchRow = true
+    }
+    
+    func onDismissSheet() {
+        self.isTouchRow = false
     }
     
     func onPressRow() {

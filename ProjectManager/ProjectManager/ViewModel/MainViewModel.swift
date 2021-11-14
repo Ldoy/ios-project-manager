@@ -9,12 +9,15 @@ import Foundation
 import SwiftUI
 
 protocol MainViewModelInputInterface {
-    func onTouchEventCreateButton()
+    func onCreateEvent()
+    func onTouchAddButton()
+    func onDismissSheet()
 }
 
 protocol MainViewModelOutputInterface {
     var eventListViewModel: EventListViewModel { get }
-    var currentEvetDetailViewModel: DetailViewModel? { get }
+    var currentEvetDetailViewModel: DetailViewModel { get }
+    var isTouchAddButton: Bool { get }
 }
 
 protocol MainViewModelable: ObservableObject {
@@ -29,18 +32,31 @@ class ProjectManager: MainViewModelable {
     
     var output: MainViewModelOutputInterface { return self }
     var input: MainViewModelInputInterface { return self }
-        
+    @Published var isTouchAddButton: Bool = false
     @Published var eventListViewModel = EventListViewModel()
 
-    var currentEvetDetailViewModel: DetailViewModel? {
-        self.eventListViewModel.output.itemViewModels.last!.detailViewModel
+    var currentEvetDetailViewModel: DetailViewModel {
+        guard let viewModel = self.eventListViewModel.output
+                .itemViewModels.last?.detailViewModel else {
+                    return DetailViewModel(event: Event(title: "", description: "", date: Date(), state: .ToDo, id: UUID()))
+        }
+        return viewModel
     }
 }
 
 extension ProjectManager: MainViewModelInputInterface {
-    func onTouchEventCreateButton() {
+    func onCreateEvent() {
         self.eventListViewModel.input.onAddEvent()
     }
+    
+    func onTouchAddButton() {
+        self.isTouchAddButton = true
+    }
+    
+    func onDismissSheet() {
+        self.isTouchAddButton = false
+    }
+
 }
 
 extension ProjectManager: MainViewModelOutputInterface {

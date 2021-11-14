@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MainView<T: MainViewModelable>: View {
     @ObservedObject var viewModel: T
-    @State var isButtonTabbed: Bool = false
     
     init(viewModel: T) {
         UINavigationBar.appearance().backgroundColor = .systemGray5
@@ -32,17 +31,20 @@ struct MainView<T: MainViewModelable>: View {
     
     var button: some View {
         Button("+") {
-            isButtonTabbed.toggle()
+            viewModel.input.onTouchAddButton()
         }
-        .sheet(isPresented: $isButtonTabbed) {
-            self.isButtonTabbed = false
+        .sheet(isPresented: Binding<Bool>(get: {
+            viewModel.output.isTouchAddButton
+        }, set: { _ in } )
+        ) {
+            viewModel.input.onDismissSheet()
         } content: {
             DetailEventView(detailViewModel:
-                                self.viewModel.output
-                                .currentEvetDetailViewModel!, id: UUID())
-        }.onChange(of: isButtonTabbed) { newValue in
+                                viewModel.output.currentEvetDetailViewModel,
+                            id: UUID())
+        }.onChange(of: viewModel.output.isTouchAddButton) { newValue in
             if newValue {
-                self.viewModel.input.onTouchEventCreateButton()
+                self.viewModel.input.onCreateEvent()
             }
         }
         .font(.title2)

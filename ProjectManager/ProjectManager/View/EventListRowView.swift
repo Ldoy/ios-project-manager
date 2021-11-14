@@ -37,7 +37,7 @@ struct EventListRowView<Value: ItemViewModelable>: View {
         }, set: { _ in
         }
         ), onDismiss: {
-            listRowViewModel.input.onTouchRow()
+            listRowViewModel.input.onDismissSheet()
         }, content: {
             DetailEventView(detailViewModel: listRowViewModel.output.detailViewModel,
                                         id: UUID())
