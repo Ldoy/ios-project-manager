@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct EventListRowView<Value: ItemViewModelable>: View {
-    @ObservedObject var listRowViewModel: Value
-    @State var isPresented: Bool = false
+
+struct EventListRowView: View {
+    var viewModel: EventViewModelable
     @State var isPopOvered: Bool = false
     
     private func decideDateTextColor() -> Color {
-        if self.listRowViewModel.output.isOutDated {
+        if viewModel.output.isOutDated {
             return Color.red
         }
         return .black
@@ -21,31 +21,22 @@ struct EventListRowView<Value: ItemViewModelable>: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text(listRowViewModel.output.currentEvent.title)
+            Text(viewModel.output.event.title)
                 .font(.title)
-            Text(listRowViewModel.output.currentEvent.description)
+            Text(viewModel.output.event.description)
                 .frame(height: 30, alignment: .leading)
                 .font(.body)
                 .foregroundColor(.gray)
-            Text(listRowViewModel.output.currentEvent.date, style: .date)
+            Text(viewModel.output.event.date, style: .date)
                 .font(.callout)
                 .foregroundColor(decideDateTextColor())
         }
-        .onTapGesture {
-            self.isPresented = true
-        }
-        .sheet(isPresented: $isPresented) {
-            self.isPresented = false
-        } content: {
-            DetailEventView(detailViewModel: listRowViewModel.output.detailViewModel,
-                            id: UUID())
-        }
         .onLongPressGesture {
-            isPopOvered.toggle()
+            self.isPopOvered = true
         }
         .popover(isPresented: $isPopOvered) {
-            PopOverView(eventState: listRowViewModel.output.currentEvent.state,
-                        viewModel: listRowViewModel)
+//            PopOverView(eventState: listRowViewModelWrapper.viewModel.output.event.state,
+//                        viewModel: listRowViewModelWrapper.viewModel)
         }
     }
 }

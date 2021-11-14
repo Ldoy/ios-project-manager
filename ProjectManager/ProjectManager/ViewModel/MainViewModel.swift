@@ -14,7 +14,7 @@ protocol MainViewModelInputInterface {
 
 protocol MainViewModelOutputInterface {
     var eventListViewModel: EventListViewModel { get }
-    var currentEvetDetailViewModel: DetailViewModel? { get }
+    //var currentEvetDetailViewModel: DetailViewModel? { get }
 }
 
 protocol MainViewModelable: ObservableObject {
@@ -32,9 +32,9 @@ class ProjectManager: MainViewModelable {
         
     @Published var eventListViewModel = EventListViewModel()
 
-    var currentEvetDetailViewModel: DetailViewModel? {
-        self.eventListViewModel.output.itemViewModels.last!.detailViewModel
-    }
+//    var currentEvetDetailViewModel: DetailViewModel? {
+//        self.eventListViewModel.output.itemViewModels.last!.detailViewModel
+//    }
 }
 
 extension ProjectManager: MainViewModelInputInterface {

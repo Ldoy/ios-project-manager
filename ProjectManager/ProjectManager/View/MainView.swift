@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MainView<T: MainViewModelable>: View {
+struct MainView<T: EventListViewModel>: View {
     @ObservedObject var viewModel: T
     @State var isButtonTabbed: Bool = false
     
@@ -20,7 +20,7 @@ struct MainView<T: MainViewModelable>: View {
         NavigationView {
             HStack {
                 ForEach(EventState.allCases, id: \.self) {
-                    EventListView(eventListViewModels: viewModel.output.eventListViewModel, state: $0)
+                    EventListView(state: $0, eventListViewModel: viewModel)
                 }
             }
             .navigationBarTitle("프로젝트 관리")
@@ -37,12 +37,12 @@ struct MainView<T: MainViewModelable>: View {
         .sheet(isPresented: $isButtonTabbed) {
             self.isButtonTabbed = false
         } content: {
-            DetailEventView(detailViewModel:
-                                self.viewModel.output
-                                .currentEvetDetailViewModel!, id: UUID())
+//            DetailEventView(detailViewModel:
+//                                self.viewModel.output
+//                                .currentEvetDetailViewModel!, id: UUID())
         }.onChange(of: isButtonTabbed) { newValue in
             if newValue {
-                self.viewModel.input.onTouchEventCreateButton()
+               // self.viewModel.input.onTouchEventCreateButton()
             }
         }
         .font(.title2)

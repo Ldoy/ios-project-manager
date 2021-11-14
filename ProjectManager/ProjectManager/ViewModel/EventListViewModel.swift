@@ -15,7 +15,7 @@ protocol ListViewModelInputInterface {
 }
 
 protocol ListViewModelOutputInterface {
-    var itemViewModels: [ItemViewModel] { get }
+    var itemViewModels: [EventViewModel] { get }
 }
 
 protocol ListViewModelable: ObservableObject {
@@ -27,10 +27,10 @@ class EventListViewModel: ListViewModelable, Delegatable {
     var input: ListViewModelInputInterface { return self }
     var output: ListViewModelOutputInterface { return self }
 
-    @Published var itemViewModels: [ItemViewModel] = []
+    @Published var itemViewModels: [EventViewModel] = []
 
     init() {
-        let itemViewModel = ItemViewModel()
+        var itemViewModel = EventViewModel()
         itemViewModel.delegate = self
         self.itemViewModels.append(itemViewModel)
     }
@@ -48,14 +48,14 @@ extension EventListViewModel: ListViewModelInputInterface {
     }
     
     func onAddEvent() {
-        let itemViewModel = ItemViewModel()
+        var itemViewModel = EventViewModel()
         itemViewModel.delegate = self
         self.itemViewModels.append(itemViewModel)
     }
     
     func onCountEventNumber(eventState: EventState) -> Int {
         return self.itemViewModels.filter { item in
-            item.currentEvent.state == eventState
+            item.output.event.state == eventState
         }.count
     }
 }

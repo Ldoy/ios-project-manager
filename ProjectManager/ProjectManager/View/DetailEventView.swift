@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct DetailEventView<T: DetailViewModelable>: View {
+struct DetailEventView: View {
     @Environment(\.presentationMode) private var presentationMode
     
     @State private var eventTitle: String = ""
@@ -17,7 +17,7 @@ struct DetailEventView<T: DetailViewModelable>: View {
     @State private var date: Date = Date()
     @State private var isInteractionDisabled: Bool = true
     
-    var detailViewModel: T
+    @ObservedObject var detailViewModel: T
     var id: UUID
     
     var body: some View {
@@ -43,7 +43,7 @@ struct DetailEventView<T: DetailViewModelable>: View {
                             .font(.title)
                             .padding()
                             .background(Color.white.shadow(color: .gray, radius: 3, x: 1, y: 4))
-                    }.disabled(isInteractionDisabled)
+                    }.disabled(self.detailViewModel.output.isInteractionDisabled)
                 }
             }
             .toolbar {
@@ -65,34 +65,18 @@ struct DetailEventView<T: DetailViewModelable>: View {
         .navigationViewStyle(.stack)
         .navigationBarTitleDisplayMode(.inline)
     }
-    
-    enum ButtonTitle: String {
-        case cancel = "Cancel"
-        case done = "Done"
-        case edit = "Edit"
-    }
-    
+   
     var cancelButton: some View {
-        Button(ButtonTitle.cancel.rawValue) {
+        Button("Cancel") {
             self.presentationMode.wrappedValue.dismiss()
         }
     }
-    
-    var editAndDoneButtonTitle: String {
-        get {
-            if self.isInteractionDisabled {
-                return ButtonTitle.edit.rawValue
-            } else {
-                return ButtonTitle.done.rawValue
-            }
-        }
-    }
-    
+   
     var editButton: some View {
-        Button(editAndDoneButtonTitle) {
-            self.isInteractionDisabled.toggle()
+        Button(self.detailViewModel.output.editAndDoneButtonTitle) {
+            self.detailViewModel.input.onTouchEditandDoneButton()
         }
-        .onChange(of: isInteractionDisabled) { newValue in
+        .onChange(of: self.detailViewModel.output.isInteractionDisabled) { newValue in
             if newValue {
                 saveEvent()
             }
